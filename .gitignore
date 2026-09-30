@@ -1,0 +1,25 @@
+# Environment & Virtualenv
+.venv/
+env/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# OS Specific
+.DS_Store
+Thumbs.db
+
+# Data & Output Artifacts (Keep sample data and gitkeeps)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp

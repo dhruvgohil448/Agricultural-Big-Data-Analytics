@@ -1,0 +1,2 @@
+metric,aligned_records,aligned_states,year_min,year_max,pearson_r,spearman_rho,note
+Monsoon_Rain_vs_Foodgrain_Yield,374,23,1997,2015,-0.2909,-0.364,Observational correlation only; non-causal due to irrigation and agronomic confounding.

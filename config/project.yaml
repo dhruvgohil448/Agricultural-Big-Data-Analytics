@@ -1,0 +1,60 @@
+project:
+  name: "Agricultural Big Data Analytics System"
+  version: "1.0.0"
+  description: "End-to-end reproducible big data pipeline on Indian crop production and meteorology"
+
+environment:
+  hadoop_home: "/opt/homebrew/opt/hadoop/libexec"
+  streaming_jar: "/opt/homebrew/Cellar/hadoop/3.5.0/libexec/share/hadoop/tools/lib/hadoop-streaming-3.5.0.jar"
+  default_fs: "hdfs://localhost:9000"
+
+hdfs:
+  root: "/user/dhruvgohil/agriculture"
+  dirs:
+    input_crop: "/user/dhruvgohil/agriculture/input/crop_production"
+    input_rainfall: "/user/dhruvgohil/agriculture/input/rainfall"
+    input_soil: "/user/dhruvgohil/agriculture/input/soil"
+    processed: "/user/dhruvgohil/agriculture/processed"
+    output: "/user/dhruvgohil/agriculture/output"
+    reports: "/user/dhruvgohil/agriculture/reports"
+
+paths:
+  data_raw: "data/raw"
+  data_processed: "data/processed"
+  data_sample: "data/sample"
+  outputs_tables: "outputs/tables"
+  outputs_figures: "outputs/figures"
+  outputs_reports: "outputs/reports"
+  logs: "logs"
+
+datasets:
+  crop_production:
+    filename: "crop_production.csv"
+    required_columns:
+      - "State_Name"
+      - "District_Name"
+      - "Crop_Year"
+      - "Season"
+      - "Crop"
+      - "Area"
+      - "Production"
+    year_range: [1990, 2025]
+  rainfall:
+    filename: "rainfall_in_india.csv"
+    required_columns:
+      - "SUBDIVISION"
+      - "YEAR"
+      - "JAN"
+      - "FEB"
+      - "MAR"
+      - "APR"
+      - "MAY"
+      - "JUN"
+      - "JUL"
+      - "AUG"
+      - "SEP"
+      - "OCT"
+      - "NOV"
+      - "DEC"
+      - "ANNUAL"
+    year_range: [1901, 2020]
