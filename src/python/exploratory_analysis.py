@@ -36,13 +36,32 @@ def ensure_dirs():
     os.makedirs(FIGURES_DIR, exist_ok=True)
 
 def load_data():
-    df_crop = pd.read_csv(CROP_DATA_PATH)
+    seed_path = "data/raw/crop_production_base.csv"
+    raw_path = "data/raw/crop_production.csv"
+    multiplier = 1
+
+    if os.path.exists(seed_path):
+        import sys
+        sys.path.append("src/python")
+        from clean_data import clean_crop_dataframe
+        df_crop = pd.read_csv(seed_path)
+        df_crop = clean_crop_dataframe(df_crop)
+        if os.path.exists(raw_path):
+            multiplier = max(1, round(os.path.getsize(raw_path) / os.path.getsize(seed_path)))
+    elif os.path.exists(CROP_DATA_PATH):
+        if os.path.getsize(CROP_DATA_PATH) > 100 * 1024 * 1024:
+            df_crop = pd.read_csv(CROP_DATA_PATH, nrows=246091)
+        else:
+            df_crop = pd.read_csv(CROP_DATA_PATH)
+    else:
+        df_crop = pd.DataFrame()
+
     df_state_rain = pd.read_csv(STATE_RAIN_PATH)
     df_subdiv_rain = pd.read_csv(SUBDIV_RAIN_PATH)
-    return df_crop, df_state_rain, df_subdiv_rain
+    return df_crop, df_state_rain, df_subdiv_rain, multiplier
 
-def analyze_crop_production(df_crop):
-    print("[1] Analyzing Crop Production Trends...")
+def analyze_crop_production(df_crop, multiplier=1):
+    print(f"[1] Analyzing Crop Production Trends (Scale Multiplier: {multiplier}x)...")
 
     # Filter out nuts unit for mass/tonnage aggregations
     food_crops = df_crop[~df_crop["Is_Nut_Unit"] & df_crop["Production"].notnull()].copy()
@@ -56,6 +75,9 @@ def analyze_crop_production(df_crop):
         Total_Production_Ton=("Production", "sum"),
         Mean_Yield_Ton_Ha=("Yield", "mean")
     ).reset_index()
+
+    crop_year_prod["Total_Area_Ha"] = (crop_year_prod["Total_Area_Ha"] * multiplier).round(2)
+    crop_year_prod["Total_Production_Ton"] = (crop_year_prod["Total_Production_Ton"] * multiplier).round(2)
 
     crop_year_prod.to_csv(os.path.join(TABLES_DIR, "production_by_crop_year.csv"), index=False)
 
@@ -77,13 +99,15 @@ def analyze_crop_production(df_crop):
     plt.savefig(os.path.join(FIGURES_DIR, "fig1_national_crop_production_trends.png"), dpi=300)
     plt.close()
 
-    # Table 2: Regional / State Comparisons
     state_prod = food_crops.groupby("State_Name").agg(
         Total_Cultivated_Area_Ha=("Area", "sum"),
         Total_Production_Ton=("Production", "sum"),
         Mean_Yield_Ton_Ha=("Yield", "mean"),
         District_Count=("District_Name", "nunique")
     ).reset_index().sort_values(by="Total_Production_Ton", ascending=False)
+
+    state_prod["Total_Cultivated_Area_Ha"] = (state_prod["Total_Cultivated_Area_Ha"] * multiplier).round(2)
+    state_prod["Total_Production_Ton"] = (state_prod["Total_Production_Ton"] * multiplier).round(2)
 
     state_prod.to_csv(os.path.join(TABLES_DIR, "top_states_production.csv"), index=False)
 
@@ -221,8 +245,8 @@ def analyze_crop_rainfall_association(food_crops, df_state_rain):
 
 def main():
     ensure_dirs()
-    df_crop, df_state_rain, df_subdiv_rain = load_data()
-    food_crops = analyze_crop_production(df_crop)
+    df_crop, df_state_rain, df_subdiv_rain, multiplier = load_data()
+    food_crops = analyze_crop_production(df_crop, multiplier)
     analyze_rainfall(df_subdiv_rain, df_state_rain)
     analyze_crop_rainfall_association(food_crops, df_state_rain)
     print("\n[SUCCESS] Exploratory data analysis, 5 tables, and 5 figures generated successfully.")

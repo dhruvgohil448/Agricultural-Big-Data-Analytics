@@ -30,6 +30,9 @@ paths:
 datasets:
   crop_production:
     filename: "crop_production.csv"
+    base_filename: "crop_production_base.csv"
+    min_size_bytes: 7000000000
+    target_scale_gb: 7.20
     required_columns:
       - "State_Name"
       - "District_Name"

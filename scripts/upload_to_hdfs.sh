@@ -2,6 +2,7 @@
 # ==============================================================================
 # scripts/upload_to_hdfs.sh
 # Idempotent HDFS setup and upload script for Agricultural Big Data Analytics.
+# Supports multi-gigabyte dataset ingestion and skips redundant uploads.
 # ==============================================================================
 
 set -euo pipefail
@@ -31,34 +32,55 @@ hdfs dfs -mkdir -p "$REPORTS_DIR"
 
 echo "[3] Uploading raw datasets to HDFS..."
 if [ -f "data/raw/crop_production.csv" ]; then
-    echo "Uploading data/raw/crop_production.csv -> $CROP_INPUT/ ..."
-    hdfs dfs -put -f data/raw/crop_production.csv "$CROP_INPUT/"
-else
-    echo "WARNING: data/raw/crop_production.csv not found locally."
+    if hdfs dfs -test -e "$CROP_INPUT/crop_production.csv" 2>/dev/null; then
+        echo "Crop dataset already exists in HDFS ($CROP_INPUT/crop_production.csv). Skipping re-upload."
+    else
+        echo "Uploading data/raw/crop_production.csv -> $CROP_INPUT/ ..."
+        hdfs dfs -put -f data/raw/crop_production.csv "$CROP_INPUT/"
+    fi
+fi
+
+if [ -f "data/raw/crop_production_base.csv" ]; then
+    if ! hdfs dfs -test -e "$CROP_INPUT/crop_production_base.csv" 2>/dev/null; then
+        echo "Uploading data/raw/crop_production_base.csv -> $CROP_INPUT/ ..."
+        hdfs dfs -put -f data/raw/crop_production_base.csv "$CROP_INPUT/"
+    fi
 fi
 
 if [ -f "data/raw/rainfall_in_india.csv" ]; then
-    echo "Uploading data/raw/rainfall_in_india.csv -> $RAIN_INPUT/ ..."
-    hdfs dfs -put -f data/raw/rainfall_in_india.csv "$RAIN_INPUT/"
-else
-    echo "WARNING: data/raw/rainfall_in_india.csv not found locally."
+    if hdfs dfs -test -e "$RAIN_INPUT/rainfall_in_india.csv" 2>/dev/null; then
+        echo "Rainfall dataset already exists in HDFS ($RAIN_INPUT/rainfall_in_india.csv). Skipping re-upload."
+    else
+        echo "Uploading data/raw/rainfall_in_india.csv -> $RAIN_INPUT/ ..."
+        hdfs dfs -put -f data/raw/rainfall_in_india.csv "$RAIN_INPUT/"
+    fi
 fi
 
 echo "[4] Uploading processed datasets to HDFS..."
 if [ -f "data/processed/cleaned_crop_production.csv" ]; then
-    echo "Uploading data/processed/cleaned_crop_production.csv -> $PROCESSED_DIR/ ..."
-    hdfs dfs -put -f data/processed/cleaned_crop_production.csv "$PROCESSED_DIR/"
+    if hdfs dfs -test -e "$PROCESSED_DIR/cleaned_crop_production.csv" 2>/dev/null; then
+        echo "Cleaned crop dataset already exists in HDFS ($PROCESSED_DIR/cleaned_crop_production.csv). Skipping re-upload."
+    else
+        echo "Uploading data/processed/cleaned_crop_production.csv -> $PROCESSED_DIR/ ..."
+        hdfs dfs -put -f data/processed/cleaned_crop_production.csv "$PROCESSED_DIR/"
+    fi
 fi
 
 if [ -f "data/processed/cleaned_rainfall.csv" ]; then
-    echo "Uploading data/processed/cleaned_rainfall.csv -> $PROCESSED_DIR/ ..."
-    hdfs dfs -put -f data/processed/cleaned_rainfall.csv "$PROCESSED_DIR/"
+    if hdfs dfs -test -e "$PROCESSED_DIR/cleaned_rainfall.csv" 2>/dev/null; then
+        echo "Cleaned rainfall dataset already exists in HDFS ($PROCESSED_DIR/cleaned_rainfall.csv). Skipping re-upload."
+    else
+        echo "Uploading data/processed/cleaned_rainfall.csv -> $PROCESSED_DIR/ ..."
+        hdfs dfs -put -f data/processed/cleaned_rainfall.csv "$PROCESSED_DIR/"
+    fi
 fi
 
 echo ""
 echo "[5] Verifying HDFS hierarchy and storage usage:"
 echo "--- Recursive listing ($HDFS_ROOT) ---"
-hdfs dfs -ls -R "$HDFS_ROOT"
+hdfs dfs -ls -h "$HDFS_ROOT"
+hdfs dfs -ls -h "$CROP_INPUT"
+hdfs dfs -ls -h "$PROCESSED_DIR"
 
 echo ""
 echo "--- Disk usage breakdown ($HDFS_ROOT) ---"

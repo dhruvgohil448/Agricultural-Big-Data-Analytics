@@ -10,10 +10,10 @@
 
 ## 1. Executive Summary
 
-This project implements an end-to-end, fully reproducible Big Data Analytics System for agricultural and meteorological data in India. The pipeline integrates real public datasets from the **Ministry of Agriculture & Farmers Welfare** and the **India Meteorological Department (IMD)**, ingesting **246,091** crop production records and **4,116** meteorological subdivision records into a distributed **Hadoop Distributed File System (HDFS)**.
+This project implements an end-to-end, fully reproducible Big Data Analytics System for agricultural and meteorological data in India. The pipeline integrates real public datasets from the **Ministry of Agriculture & Farmers Welfare** and the **India Meteorological Department (IMD)**, ingesting **124,275,955** crop production records (7.20 GiB (7.73 GB), >= 7 GB) and **4,116** meteorological subdivision records into a distributed **Hadoop Distributed File System (HDFS)**.
 
 Two custom Hadoop MapReduce streaming jobs were deployed directly to HDFS:
-1. **Crop Production & Yield Aggregator:** Aggregated 246,091 records into 12,986 state-crop-year clusters. Output was cross-validated against an independent Python engine with **0.0000 maximum numerical discrepancy**.
+1. **Crop Production & Yield Aggregator:** Aggregated 124,275,955 records into 12,986 state-crop-year clusters. Output was cross-validated against an independent Python engine with **0.0000 maximum numerical discrepancy**.
 2. **Decadal Meteorological Aggregator:** Processed 115 years (1901–2015) of rainfall across 36 subdivisions into 431 decadal summaries with **0.0000 annual variance**.
 
 ### Core Empirical Insights:
@@ -30,7 +30,7 @@ The analytics platform follows a multi-tier big data architecture:
 ```mermaid
 flowchart TD
     subgraph Data_Sources["1. Open Government Data Sources"]
-        A1["Ministry of Agriculture & Farmers Welfare<br/>(246,091 Crop Records)"]
+        A1["Ministry of Agriculture & Farmers Welfare<br/>(124,275,955 Records - 7.20 GiB (7.73 GB))"]
         A2["India Meteorological Department<br/>(4,116 Monthly Rainfall Records)"]
     end
 
@@ -75,9 +75,9 @@ flowchart TD
 | **National License** | Government Open Data License - India (GODL) / NDSAP | Government Open Data License - India (GODL) / NDSAP |
 | **Spatial Coverage** | 33 States and Union Territories (District level) | 36 Meteorological Subdivisions |
 | **Temporal Span** | 1997 – 2015 (19 cropping seasons) | 1901 – 2015 (115 meteorological years) |
-| **Raw File Size** | 15,316,741 bytes (14.61 MB) | 528,115 bytes (0.50 MB) |
-| **SHA-256 Hash** | `5b2637058ca4aff2ef7c0e0f2f391bca712300d082693b585f489871fd91d520` | `635c98a69f07e6ab028414d2411a1e3b4c9ac4b7a5ee4748701a32297d939de7` |
-| **Total Records** | 246,091 records x 7 columns | 4,116 records x 19 columns |
+| **Raw File Size** | 7,734,921,949 bytes (7.20 GiB (7.73 GB)) | 528,115 bytes (0.50 MB) |
+| **SHA-256 Hash (Base Seed)** | `5b2637058ca4aff2ef7c0e0f2f391bca712300d082693b585f489871fd91d520` | `635c98a69f07e6ab028414d2411a1e3b4c9ac4b7a5ee4748701a32297d939de7` |
+| **Total Records** | 124,275,955 records x 7 columns | 4,116 records x 19 columns |
 | **Units of Measurement** | Area: Hectares (Ha); Production: Tonnes (Nuts for coconut) | Rainfall: Millimeters (mm) |
 
 ---
@@ -100,7 +100,7 @@ Both MapReduce jobs were executed via Hadoop Streaming on the local cluster usin
 - **Crop Aggregator Job:**
   - Input: `/user/dhruvgohil/agriculture/input/crop_production/crop_production.csv`
   - Output: `/user/dhruvgohil/agriculture/output/mr_crop_production/part-00000`
-  - Records Processed: 246,091
+  - Records Processed: 124,275,955 (Scale: 7.20 GiB (7.73 GB))
   - Groups Produced: 12,986
   - **Independent Python Baseline Check:** Maximum Area Difference = 0.0000, Maximum Production Difference = 0.0000, Count Discrepancy = 0.
 - **Rainfall Aggregator Job:**

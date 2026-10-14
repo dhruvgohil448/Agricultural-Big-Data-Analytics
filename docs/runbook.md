@@ -10,7 +10,7 @@ This document provides start-to-finish instructions for deploying, operating, ve
 - **Java Runtime:** OpenJDK 17 (`JAVA_HOME` configured)
 - **Hadoop Ecosystem:** Apache Hadoop 3.5.0 installed via Homebrew (`/opt/homebrew/opt/hadoop/libexec`)
 - **Python Environment:** Python 3.9+ with virtual environment at `.venv`
-- **Disk Storage:** Minimum 5 GB free disk space
+- **Disk Storage:** Minimum 20 GB free disk space (to host >= 7 GB raw, ~9 GB cleaned, and distributed HDFS blocks)
 
 ---
 

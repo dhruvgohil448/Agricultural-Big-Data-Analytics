@@ -14,7 +14,10 @@ PROC_RAIN = "data/processed/cleaned_rainfall.csv"
 
 def test_raw_files_exist_and_non_empty():
     assert os.path.exists(RAW_CROP), f"{RAW_CROP} missing"
-    assert os.path.getsize(RAW_CROP) > 10_000_000, "Raw crop dataset is smaller than expected"
+    assert os.path.getsize(RAW_CROP) >= 7_000_000_000, f"Raw crop dataset must be >= 7 GB (found {os.path.getsize(RAW_CROP) / (1024**3):.2f} GiB)"
+
+    assert os.path.exists(PROC_CROP), f"{PROC_CROP} missing"
+    assert os.path.getsize(PROC_CROP) >= 7_000_000_000, f"Cleaned crop dataset must be >= 7 GB (found {os.path.getsize(PROC_CROP) / (1024**3):.2f} GiB)"
 
     assert os.path.exists(RAW_RAIN), f"{RAW_RAIN} missing"
     assert os.path.getsize(RAW_RAIN) > 100_000, "Raw rainfall dataset is smaller than expected"

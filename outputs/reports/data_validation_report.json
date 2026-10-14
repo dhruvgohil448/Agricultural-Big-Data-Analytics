@@ -3,13 +3,12 @@
     "dataset": "crop_production",
     "filepath": "data/raw/crop_production.csv",
     "file_exists": true,
-    "file_size_bytes": 15316741,
+    "file_size_bytes": 7734921949,
     "status": "PASSED",
     "errors": [],
     "warnings": [
-      "Production contains 3730 missing values (1.52%)."
+      "Production contains 1,883,650 missing values (1.52%)."
     ],
-    "total_rows": 246091,
     "total_columns": 7,
     "columns": [
       "State_Name",
@@ -20,6 +19,7 @@
       "Area",
       "Production"
     ],
+    "total_rows": 124275955,
     "null_counts": {
       "State_Name": 0,
       "District_Name": 0,
@@ -27,16 +27,16 @@
       "Season": 0,
       "Crop": 0,
       "Area": 0,
-      "Production": 3730
+      "Production": 1883650
     },
-    "duplicates": 0,
-    "min_year": 1997,
-    "max_year": 2015,
+    "null_production_count": 1883650,
+    "duplicates": 124029864,
     "negative_area_count": 0,
     "zero_area_count": 0,
     "negative_production_count": 0,
-    "zero_production_count": 3523,
-    "null_production_count": 3730,
+    "zero_production_count": 1779115,
+    "min_year": 1997,
+    "max_year": 2015,
     "unique_states": 33,
     "unique_crops": 124
   },
